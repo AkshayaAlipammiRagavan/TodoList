@@ -1,16 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TodoCreator from './FormInput';
 import TodoList from './List';
-import { createTheme } from '@mui/material/styles';
 import { StyledEngineProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import '../styles/Form.css';
-
-const theme = createTheme({
-    palette: {
-        primary: { main: '#000000' }
-    }
-});
 
 const Form = () => {
     const [newTodo, setNewTodo] = useState('');
@@ -18,7 +11,7 @@ const Form = () => {
         {
             text: "Learn about React",
             isEditing: false,
-            subTaskText: ["Props", "Context"]
+            subTaskText: ["Props", "Context"],
         },
         {
             text: "State management in React",
@@ -51,10 +44,13 @@ const Form = () => {
     };
 
     const addSubTask = (taskIndex) => {
+        if(todos.at(taskIndex).subTaskText.includes(subTask) === false){
         todos.at(taskIndex).subTaskText.push(subTask);
+        }
     }
     const addTodo = text => {
-        if (text !== '' && text !== ' ') {
+        let TaskDuplicate = todos.find(item => item.text === text);
+        if (text !== '' && text !== ' ' && (TaskDuplicate === undefined)) {
             const newTodos = [...todos, { text, subTaskText: [] }]
             setNewTodo('');
             setTodos(newTodos);
@@ -71,9 +67,17 @@ const Form = () => {
         setSubOpen(false);
     };
 
-    const removeSubTodo = (inx, subInx) => {
+    const removeSubTodo = (todoText, subTodoText) => {
         const newArr = [...todos];
-        newArr.at(inx).subTaskText.splice(subInx, 1);
+        let subInx;
+        newArr.forEach((element, inx) => {
+            if(element.text === todoText){
+                if(element.subTaskText.includes(subTodoText)){
+                    subInx = element.subTaskText.indexOf(subTodoText)
+                    newArr.at(inx).subTaskText.splice(subInx, 1);
+                }
+            }
+        });
         setTodos(newArr);
     };
 
@@ -105,7 +109,7 @@ const Form = () => {
     return (
         <StyledEngineProvider injectFirst>
             <header>
-                <div className='todoTitle'>
+                <div className='todoTitle' data-testid="headerField">
                 BOURNE Digital - TODO List
                 </div>
                 <div>
@@ -117,12 +121,12 @@ const Form = () => {
                         onChange={(e) => setSearchInput(e.target.value)}
                         aria-describedby="component-error-text"
                         className="searchInput"
+                        data-testid="searchField"
                     />
                 </div>
                 </header>
             <form onSubmit={handleSubmit} className="formTask">
                 <TodoCreator
-                    theme={theme}
                     todo={newTodo}
                     setTodo={setTodo}
                     clearInput={clearInput}
@@ -130,7 +134,6 @@ const Form = () => {
                     preventSubmit={preventSubmit}
                 />
                 <TodoList
-                    theme={theme}
                     todos={todos}
                     editTodo={editTodo}
                     deleteTodo={removeTodo}

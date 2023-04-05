@@ -3,14 +3,12 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { FormHelperText } from '@mui/material';
 import { FormControl } from '@mui/material';
-import { ThemeProvider } from '@mui/material/styles';
 import "../styles/FormInput.css";
 import PropTypes from 'prop-types';
 
-const TodoCreator = ({ theme, todo, setTodo, clearInput, isInputEmpty, preventSubmit }) => {
+const TodoCreator = ({todo, setTodo, clearInput, isInputEmpty, preventSubmit }) => {
     return (
         <div className="formInput">
-            <ThemeProvider theme={theme}>
                 <div>
                 <FormControl className='taskInput'>
                     <TextField
@@ -28,12 +26,13 @@ const TodoCreator = ({ theme, todo, setTodo, clearInput, isInputEmpty, preventSu
                         <></>
                         :
                         <>
-                            <FormHelperText id="component-error-text">Task can't be empty</FormHelperText>
+                            <FormHelperText id="component-error-text">Task can't be empty or duplicated</FormHelperText>
                         </>
                     }
                 </FormControl>
-                
+                <span>
                 <Button
+                    id= "taskButton"
                     type="submit"
                     alt="add-note"
                     className= "button"
@@ -41,15 +40,14 @@ const TodoCreator = ({ theme, todo, setTodo, clearInput, isInputEmpty, preventSu
                 >
                     Add task
                 </Button>
+                </span>
                 </div>
-            </ThemeProvider>
         </div>
     )
 
 }
 
 TodoCreator.propTypes = {
-    theme: PropTypes.string, 
     todo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     setTodo: PropTypes.func.isRequired, 
     clearInput: PropTypes.func.isRequired, 

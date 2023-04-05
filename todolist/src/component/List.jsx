@@ -1,5 +1,4 @@
 import React from 'react';
-import { ThemeProvider } from '@mui/material/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -23,7 +22,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ClearIcon from '@mui/icons-material/Clear';
 import PropTypes from 'prop-types';
 
-const TodoList = ({ theme, todos, editTodo, searchInput, removeSubTodo, subOpen, setSubOpen, deleteTodo, saveTodo, subTaskIndex, setviewTaskIndex, noteRef, preventSubmit, addSubTask, setSubTask, subAddDisable }) => {
+const TodoList = ({ todos, editTodo, searchInput, removeSubTodo, subOpen, setSubOpen, deleteTodo, saveTodo, subTaskIndex, setviewTaskIndex, noteRef, preventSubmit, addSubTask, setSubTask, subAddDisable }) => {
     let UniqKey = 123;
     let subTaskKey = 10;
 
@@ -31,8 +30,8 @@ const TodoList = ({ theme, todos, editTodo, searchInput, removeSubTodo, subOpen,
     const [taskIndex, setTaskIndex] = React.useState(null);
     const [currentViewTaskIndex, setcurrentViewTaskIndex] = React.useState(null);
     const displayTodo = React.useMemo(() => {
-        return ( todos.filter(item => {
-            if (item.text.toLowerCase().includes(searchInput.toLowerCase())) {
+        return (todos.filter(item => {
+            if (item.text.toLowerCase().includes(searchInput.toLowerCase().trim())) {
                 return item;
             }
         })
@@ -64,33 +63,34 @@ const TodoList = ({ theme, todos, editTodo, searchInput, removeSubTodo, subOpen,
         addSubTask(taskIndex);
         handleClose();
     };
-
+    console.log(searchInput)
     return (
-        <ThemeProvider theme={theme}>
-            <List>
-                {
-                    displayTodo.map((todo, inx) => {
-                        const labelId = `list-todo-${todo}`;
+        
+        <List>
+            {
+                displayTodo.map((todo, inx) => {
+                    const labelId = `list-todo-${todo}`;
 
-                        return (
-                            <>
-                                <ListItem
-                                    key={`todo-${UniqKey++}`}
-                                    role={undefined}
-                                    dense
-                                    button
-                                    className='listDetail'
-                                >
-                                    <ListItemIcon>
-                                        <CircleIcon />
-                                    </ListItemIcon>
-                                    {
-                                        (!todo.isEditing) ?
-                                            <>
-                                                <ListItemText
-                                                    id={labelId}
-                                                    primary={`${todo.text}`}
-                                                />
+                    return (
+                        <>
+                            <ListItem
+                                key={`todo-${UniqKey++}`}
+                                role={undefined}
+                                dense
+                                button
+                                className='listDetail'
+                            >
+                                <ListItemIcon>
+                                    <CircleIcon />
+                                </ListItemIcon>
+                                {
+                                    (!todo.isEditing) ?
+                                        <>
+                                            <ListItemText
+                                                id={labelId}
+                                                primary={`${todo.text}`}
+                                            />
+                                            {(searchInput.trim() === "") &&
                                                 <ListItemIcon>
                                                     <Tooltip title="Edit Task">
                                                         <IconButton
@@ -102,32 +102,39 @@ const TodoList = ({ theme, todos, editTodo, searchInput, removeSubTodo, subOpen,
                                                         </IconButton>
                                                     </Tooltip>
                                                 </ListItemIcon>
-                                            </>
-                                            :
-                                            <>
-                                                <input
-                                                    className="formEditInput"
-                                                    defaultValue={todo.text}
-                                                    ref={(element) => noteRef.current[inx] = element}
-                                                    onKeyPress={preventSubmit}
-                                                    id="task"
-                                                />
-                                                <ListItemIcon>
-                                                    <Tooltip title="Save Task">
-                                                        <IconButton onClick={() => saveTodo(inx)} edge="end" aria-label="save">
-                                                            <SaveIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </ListItemIcon>
-                                                <ListItemIcon>
-                                                    <Tooltip title="clear Task">
-                                                        <IconButton onClick={() => editTodo(inx)} edge="end" aria-label="save">
-                                                            <ClearIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </ListItemIcon>
-                                            </>
-                                    }
+                                            }
+                                        </>
+                                        :
+                                        <>
+                                            <input
+                                                className="formEditInput"
+                                                defaultValue={todo.text}
+                                                ref={(element) => noteRef.current[inx] = element}
+                                                onKeyPress={preventSubmit}
+                                                id="task"
+                                            />
+                                            {(searchInput.trim() === "") &&
+                                                <>
+                                                    <ListItemIcon>
+                                                        <Tooltip title="Save Task">
+                                                            <IconButton onClick={() => saveTodo(inx)} edge="end" aria-label="save">
+                                                                <SaveIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </ListItemIcon>
+                                                    <ListItemIcon>
+                                                        <Tooltip title="clear Task">
+                                                            <IconButton onClick={() => editTodo(inx)} edge="end" aria-label="save">
+                                                                <ClearIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </ListItemIcon>
+                                                </>
+                                            }
+                                        </>
+                                }
+                                {
+                                (searchInput.trim() === "") && <>
                                     <Tooltip title="Add Sub Task">
                                         <IconButton edge="end" aria-label="add" onClick={() => handleClickOpen(inx)}>
                                             <PlaylistAddIcon />
@@ -137,60 +144,60 @@ const TodoList = ({ theme, todos, editTodo, searchInput, removeSubTodo, subOpen,
                                     <Button onClick={() => deleteTodo(inx)} edge="end" aria-label="delete" className='done'>
                                         Done
                                     </Button>
-                                </ListItem>
-                                {
-                                    ((subTaskIndex === inx) && subOpen) &&
-                                    <List component="div" disablePadding>
-                                        {
-                                            todo.subTaskText.map((subTodo, subInx) => {
-                                                return (
-                                                    <ListItemButton sx={{ pl: 4 }} key={`subTodo-${subTaskKey++}`}>
-                                                        <IconButton>
-                                                            <ArrowRightIcon />
-                                                        </IconButton>
-                                                        <ListItemText primary={`${subTodo}`} />
-                                                        <Tooltip title="Delete Sub Task">
-                                                            <IconButton edge="end" aria-label="add">
-                                                                <DeleteIcon onClick={() => removeSubTodo(inx, subInx)} />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                    </ListItemButton>
-                                                );
-                                            })
-                                        }
-
-                                    </List>
+                                </>
                                 }
-                                <Dialog open={open} onClose={handleClose}>
-                                    <DialogTitle>Add Sub Task</DialogTitle>
-                                    <DialogContent>
-                                        <TextField
-                                            autoFocus
-                                            margin="dense"
-                                            id="name"
-                                            label="Please enter the subtask"
-                                            type="text"
-                                            fullWidth
-                                            onChange={(e) => setSubTask(e.target.value)}
-                                            variant="standard"
-                                            required
-                                        />
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleClose}>close</Button>
-                                        <Button disabled={subAddDisable} onClick={() => subTaskAdd()}>Add</Button>
-                                    </DialogActions>
-                                </Dialog>
-                            </>
-                        );
-                    })}
-            </List>
-        </ThemeProvider>
+                            </ListItem>
+                            {
+                                ((subTaskIndex === inx) && subOpen) &&
+                                <List component="div" disablePadding>
+                                    {
+                                        todo.subTaskText.map((subTodo) => {
+                                            return (
+                                                <ListItemButton sx={{ pl: 4 }} key={`subTodo-${subTaskKey++}`}>
+                                                    <IconButton>
+                                                        <ArrowRightIcon />
+                                                    </IconButton>
+                                                    <ListItemText primary={`${subTodo}`} />
+                                                    <Tooltip title="Delete Sub Task">
+                                                        <IconButton edge="end" aria-label="add">
+                                                            <DeleteIcon onClick={() => removeSubTodo(todo.text, subTodo)} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </ListItemButton>
+                                            );
+                                        })
+                                    }
+
+                                </List>
+                            }
+                            <Dialog open={open} onClose={handleClose}>
+                                <DialogTitle>Add Sub Task</DialogTitle>
+                                <DialogContent>
+                                    <TextField
+                                        autoFocus
+                                        margin="dense"
+                                        id="name"
+                                        label="Please enter the subtask"
+                                        type="text"
+                                        fullWidth
+                                        onChange={(e) => setSubTask(e.target.value)}
+                                        variant="standard"
+                                        required
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleClose}>close</Button>
+                                    <Button disabled={subAddDisable} onClick={() => subTaskAdd()}>Add</Button>
+                                </DialogActions>
+                            </Dialog>
+                        </>
+                    );
+                })}
+        </List>
     );
 };
 
 TodoList.propTypes = {
-    theme: PropTypes.string, 
     todos: PropTypes.array.isRequired,
     editTodo: PropTypes.func.isRequired,
     searchInput: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -199,7 +206,7 @@ TodoList.propTypes = {
     setSubOpen: PropTypes.func.isRequired,
     deleteTodo: PropTypes.func.isRequired,
     saveTodo: PropTypes.func.isRequired,
-    subTaskIndex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    subTaskIndex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     setviewTaskIndex: PropTypes.func.isRequired,
     preventSubmit: PropTypes.func.isRequired,
     addSubTask: PropTypes.func.isRequired,
