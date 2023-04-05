@@ -1,0 +1,22 @@
+.searchInput{
+    margin-right: 80px;
+}
+header{
+   background-color:  #d1d1e0;
+   padding: 20px;
+   font-weight: bolder;
+   background-image: linear-gradient( #e0e0eb, #5c5c8a);
+   position: fixed;
+   width: 100%;
+   top:0;
+   display: flex;
+   justify-content: space-between;
+   z-index: 40;
+}
+.formTask{
+  margin-top: 150px;
+}
+.todoTitle{
+    margin-left: 80px;
+    padding-top: 12px;
+}

@@ -1,0 +1,23 @@
+.done{
+    background-color:  #d1d1e0;
+    margin-left: 10px;
+}
+.viewSubTask{
+    background-color:  #d1d1e0;
+    margin-left: 10px;
+}
+.done:hover{
+    background-color:  #5c5c8a
+}
+.viewSubTask:hover{
+    background-color:  #5c5c8a
+}
+.listDetail{
+    border: 1px dotted #d6d6c2;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.formEditInput{
+    width: 68%;
+    display: block;
+}
